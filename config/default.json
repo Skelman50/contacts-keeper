@@ -1,0 +1,4 @@
+{
+  "mongoURI": "mongodb://localhost/contactsKeeper",
+  "jwtSecret": "someSecret"
+}
