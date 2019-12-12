@@ -1,4 +1,5 @@
 const express = require("express");
+const { auth, checkValid } = require("../middlewares/validator");
 
 const router = express.Router();
 
@@ -12,7 +13,7 @@ router.get("/", (req, res) => {
 //@route    POST api/auth
 //@desc     auth user and get token
 //@access   Public
-router.get("/", (req, res) => {
+router.get("/", auth, checkValid, (req, res) => {
   res.send("Log in user");
 });
 
