@@ -1,9 +1,6 @@
 const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
 const User = require("../models/Users");
-const config = require("config");
-
-const jwtSecret = config.get("jwtSecret");
+const { getSighn } = require("../services/auth");
 
 //@route    POST api/users
 //@desc     register a user
@@ -19,17 +16,8 @@ exports.registerUser = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     user.password = await bcrypt.hash(password, salt);
     await user.save();
-
-    const payload = {
-      user: {
-        id: user.id
-      }
-    };
-
-    jwt.sign(payload, jwtSecret, { expiresIn: 360000 }, (err, token) => {
-      if (err) throw err;
-      res.json({ token });
-    });
+    const token = await getSighn(user);
+    res.json({ token });
   } catch (error) {
     console.log("Error".red, error);
     res.status(500).send("Server error");

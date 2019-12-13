@@ -1,20 +1,13 @@
 const express = require("express");
 const { auth, checkValid } = require("../middlewares/validator");
+const { authenticate } = require("../controllers/auth");
+const { authMdw } = require("../middlewares/auth");
+const { loggedUser } = require("../controllers/auth");
 
 const router = express.Router();
 
-//@route    GET api/auth
-//@desc     logged a user
-//@access   Private
-router.get("/", (req, res) => {
-  res.send("Get logged in user");
-});
+router.get("/", authMdw, loggedUser);
 
-//@route    POST api/auth
-//@desc     auth user and get token
-//@access   Public
-router.get("/", auth, checkValid, (req, res) => {
-  res.send("Log in user");
-});
+router.post("/", auth, checkValid, authenticate);
 
 module.exports = router;
