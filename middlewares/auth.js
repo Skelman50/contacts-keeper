@@ -1,13 +1,15 @@
 const jwt = require("jsonwebtoken");
+const asyncHandler = require("express-async-handler");
 const config = require("config");
+const ErrorResponse = require("../utils/error-response");
 
-exports.authMdw = (req, res, next) => {
+exports.authMdw = asyncHandler((req, res, next) => {
   //get token from header
   const token = req.header("x-auth-token");
 
   //check if not token
   if (!token) {
-    return res.status(401).json({ msg: "No token" });
+    return next(new ErrorResponse("No token", 401));
   }
 
   try {
@@ -15,6 +17,6 @@ exports.authMdw = (req, res, next) => {
     req.user = decoded.user;
     next();
   } catch (error) {
-    return res.status(401).json({ msg: "No token" });
+    return next(new ErrorResponse("No token", 401));
   }
-};
+});
