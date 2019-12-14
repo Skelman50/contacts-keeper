@@ -13,6 +13,9 @@ exports.errorHandler = (err, req, res, next) => {
     const message = Object.values(err.errors);
     err = new Errorresponse(message, 400);
   }
+  if (!err.statusCode) {
+    console.log("Error".red, err);
+  }
   res
     .status(err.statusCode || 500)
     .json({ success: false, error: err.message || "Server error" });

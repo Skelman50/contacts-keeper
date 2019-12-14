@@ -23,3 +23,38 @@ exports.addNewContact = asyncHandler(async (req, res, next) => {
   const contact = await newContact.save();
   res.json({ contact });
 });
+
+//@route    PUT api/contacts/:id
+//@desc     add a new contact
+//@access   Private
+exports.updateContact = asyncHandler(async (req, res, next) => {
+  const contactFields = { ...req.body };
+  let contact = await Contact.findById(req.params.id);
+  if (!contact) {
+    return next(new ErrorResponse("contact not found", 404));
+  }
+  if (contact.user.toString() !== req.user.id) {
+    return next(new ErrorResponse("Not authorized", 401));
+  }
+  contact = await Contact.findByIdAndUpdate(
+    req.params.id,
+    { $set: contactFields },
+    { new: true }
+  );
+  res.json(contact);
+});
+
+//@route    DELETE api/contacts/:id
+//@desc     delete contact
+//@access   Private
+exports.deleteContact = asyncHandler(async (req, res, next) => {
+  const contact = await Contact.findById(req.params.id);
+  if (!contact) {
+    return next(new ErrorResponse("Contact not found", 404));
+  }
+  if (contact.user.toString() !== req.user.id) {
+    return next(new ErrorResponse("Not authorized", 401));
+  }
+  await Contact.findByIdAndDelete(req.params.id);
+  res.json({ success: true });
+});
