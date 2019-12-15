@@ -2,7 +2,10 @@ import {
   ADD_CONTACT,
   DELETE_CONTACT,
   SET_CURRENT,
-  CLEAR_CURRENT
+  CLEAR_CURRENT,
+  UPDATE_CONTACT,
+  FILTER_CONTACTS,
+  CLEAR_FILTER
 } from "../types";
 
 export const contactReducer = (state, { type, payload }) => {
@@ -18,15 +21,46 @@ export const contactReducer = (state, { type, payload }) => {
         contacts: state.contacts.filter(contact => contact.id !== payload)
       };
     case SET_CURRENT:
-      console.log(payload);
       return {
         ...state,
         currentContact: payload
       };
     case CLEAR_CURRENT:
+      const currentContact = () => {
+        if (payload === null) {
+          return null;
+        }
+        if (state.currentContact && payload === state.currentContact.id) {
+          return null;
+        }
+        return state.currentContact;
+      };
       return {
         ...state,
-        currentContact: null
+        currentContact: currentContact()
+      };
+    case UPDATE_CONTACT:
+      return {
+        ...state,
+        contacts: state.contacts.map(contact => {
+          if (contact.id === payload.id) {
+            return { ...payload };
+          }
+          return contact;
+        })
+      };
+    case FILTER_CONTACTS:
+      return {
+        ...state,
+        filtered: state.contacts.filter(contact => {
+          const regexp = new RegExp(`${payload}`, "gi");
+          return contact.name.match(regexp) || contact.email.match(regexp);
+        })
+      };
+    case CLEAR_FILTER:
+      return {
+        ...state,
+        filtered: null
       };
     default:
       return state;

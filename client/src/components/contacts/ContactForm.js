@@ -1,5 +1,5 @@
-import React, { useState, useContext } from "react";
-import { ContactContext } from "../context/contact/contactContext";
+import React, { useState, useContext, useEffect } from "react";
+import { ContactContext } from "../../context/contact/contactContext";
 
 const ContactForm = () => {
   const [contact, setContact] = useState({
@@ -11,13 +11,45 @@ const ContactForm = () => {
 
   const contactContext = useContext(ContactContext);
 
+  const {
+    addContact,
+    currentContact,
+    clearCurrent,
+    updateContact
+  } = contactContext;
+
+  useEffect(() => {
+    if (currentContact !== null) {
+      setContact(currentContact);
+    } else {
+      setContact({
+        name: "",
+        phone: "",
+        email: "",
+        type: "personal"
+      });
+    }
+  }, [contactContext, currentContact]);
+
   const onChange = e => {
     setContact({ ...contact, [e.target.name]: e.target.value });
   };
 
+  const submitTitle = !currentContact ? "Add Contact" : "Update Contact";
+
+  const clearAll = e => {
+    e.preventDefault();
+    clearCurrent();
+  };
+
   const onSubmit = e => {
     e.preventDefault();
-    contactContext.addContact(contact);
+    if (!currentContact) {
+      addContact(contact);
+    } else {
+      updateContact(contact);
+    }
+    clearCurrent();
     setContact({
       name: "",
       phone: "",
@@ -29,7 +61,7 @@ const ContactForm = () => {
   const { name, phone, email, type } = contact;
   return (
     <form onSubmit={onSubmit}>
-      <h2 className="text-primary">Add Contact</h2>
+      <h2 className="text-primary">{submitTitle}</h2>
       <input
         type="text"
         placeholder="name"
@@ -71,10 +103,17 @@ const ContactForm = () => {
       <div>
         <input
           type="submit"
-          value="Add Contact"
+          value={submitTitle}
           className="btn btn-primary btn-block"
         />
       </div>
+      {currentContact && (
+        <div>
+          <button className="btn btn-light btn-block" onClick={clearAll}>
+            Clear
+          </button>
+        </div>
+      )}
     </form>
   );
 };

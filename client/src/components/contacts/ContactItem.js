@@ -1,14 +1,16 @@
 import React, { useContext } from "react";
-import { ContactContext } from "../context/contact/contactContext";
+import { ContactContext } from "../../context/contact/contactContext";
 
 const ContactItem = ({ contact }) => {
   const contactContext = useContext(ContactContext);
+  const { deleteContact, setCurrentContact, clearCurrent } = contactContext;
   const onDelete = () => {
-    contactContext.deleteContact(contact.id);
+    deleteContact(contact.id);
+    clearCurrent(contact.id);
   };
 
   const setCurrent = () => {
-    contactContext.setCurrentContact(contact);
+    setCurrentContact(contact);
   };
   return (
     <div className="card bg-lite">
