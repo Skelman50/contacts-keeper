@@ -4,7 +4,9 @@ import {
   CLEAR_ERRORS,
   USER_LOADED,
   AUTH_ERROR,
-  LOGIN_SUCCESS
+  LOGIN_SUCCESS,
+  LOGIN_FAIL,
+  LOGOUT
 } from "../types";
 
 export const authReducer = (state, { type, payload }) => {
@@ -20,6 +22,8 @@ export const authReducer = (state, { type, payload }) => {
       };
     case REGISTER_FAIL:
     case AUTH_ERROR:
+    case LOGIN_FAIL:
+    case LOGOUT:
       localStorage.removeItem("token");
       return {
         ...state,
