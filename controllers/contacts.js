@@ -21,7 +21,7 @@ exports.addNewContact = asyncHandler(async (req, res, next) => {
   const { id: user } = req.user;
   const newContact = new Contact({ name, email, phone, type, user });
   const contact = await newContact.save();
-  res.json({ contact });
+  res.json(contact);
 });
 
 //@route    PUT api/contacts/:id
