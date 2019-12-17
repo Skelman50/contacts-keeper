@@ -1,11 +1,20 @@
 import React, { useContext, Fragment } from "react";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../../context/auth/authContext";
+import { ContactContext } from "../../context/contact/contactContext";
 
 const NavBar = ({ title = "Contact Keeper", icon = "fas fa-id-card-alt" }) => {
   const authContext = useContext(AuthContext);
+  const contactContext = useContext(ContactContext);
+
+  const { clearContacts } = contactContext;
 
   const { isAuthenticate, user, logOut } = authContext;
+
+  const onLogout = () => {
+    logOut();
+    clearContacts();
+  };
 
   const authLinks = (
     <Fragment>
@@ -16,7 +25,7 @@ const NavBar = ({ title = "Contact Keeper", icon = "fas fa-id-card-alt" }) => {
         <Link to="/about">About</Link>
       </li>
       <li>Hello {user && user.name}</li>
-      <li onClick={logOut}>
+      <li onClick={onLogout}>
         <Link to="#">
           <i className="fas fa-sign-out-alt" />{" "}
           <span className="hide-sm">Logout</span>

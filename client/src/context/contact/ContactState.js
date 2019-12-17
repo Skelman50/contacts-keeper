@@ -11,7 +11,8 @@ import {
   FILTER_CONTACTS,
   CLEAR_FILTER,
   CONTACT_ERROR,
-  GET_CONTACTS
+  GET_CONTACTS,
+  CLEAR_CONTACTS
 } from "../types";
 
 const ContactState = props => {
@@ -40,12 +41,19 @@ const ContactState = props => {
     try {
       const response = await axios.get("/api/contacts");
       dispatch({ type: GET_CONTACTS, payload: response.data });
-    } catch (error) {}
+    } catch (error) {
+      dispatch({ type: CONTACT_ERROR, payload: error.response.error });
+    }
   };
 
   //Delete contact
-  const deleteContact = id => {
-    dispatch({ type: DELETE_CONTACT, payload: id });
+  const deleteContact = async id => {
+    try {
+      await axios.delete(`/api/contacts/${id}`);
+      dispatch({ type: DELETE_CONTACT, payload: id });
+    } catch (error) {
+      dispatch({ type: CONTACT_ERROR, payload: error.response.error });
+    }
   };
   //Set curent contact
   const setCurrentContact = contact => {
@@ -59,8 +67,13 @@ const ContactState = props => {
 
   //Update contact
 
-  const updateContact = contact => {
-    dispatch({ type: UPDATE_CONTACT, payload: contact });
+  const updateContact = async contact => {
+    try {
+      const response = await axios.put(`/api/contacts/${contact._id}`, contact);
+      dispatch({ type: UPDATE_CONTACT, payload: response.data });
+    } catch (error) {
+      dispatch({ type: CONTACT_ERROR, payload: error.response.error });
+    }
   };
 
   //Filter contact
@@ -71,6 +84,12 @@ const ContactState = props => {
   //Clear filter
   const clearFilter = () => {
     dispatch({ type: CLEAR_FILTER });
+  };
+
+  //clear contacts
+
+  const clearContacts = () => {
+    dispatch({ type: CLEAR_CONTACTS });
   };
 
   return (
@@ -88,7 +107,8 @@ const ContactState = props => {
         updateContact,
         filterContacts,
         clearFilter,
-        getContacts
+        getContacts,
+        clearContacts
       }}
     >
       {props.children}
